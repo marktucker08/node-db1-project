@@ -13,37 +13,24 @@ const getById = async id => {
  
 }
 
-const create = account => {
+const create = async account => {
   // DO YOUR MAGIC
-  db('accounts').insert({ name: account.name, budget: account.budget })
-  .then(newId => {
-    return getById(newId)
-  })
-  .then(newAcc => {
-    return newAcc;
-  })
+  const result = await db('accounts').insert({ name: account.name, budget: account.budget })
+  const newAcct = await getById(result)
+    return newAcct;
 }
 
-const updateById = (id, account) => {
+const updateById = async (id, account) => {
   // DO YOUR MAGIC
-  db('accounts').where('id', id).update({ ...account, name: account.name, budget: account.budget })
-  .then(records => {
-    return getById(id)
-  })
-  .then(updated => {
+  const result = await db('accounts').where('id', id).update({ ...account, name: account.name, budget: account.budget })
+  const updated = await getById(id);
     return updated;
-  })
 }
 
-const deleteById = id => {
+const deleteById = async id => {
   // DO YOUR MAGIC
-  db('accounts').where('id', id).delete()
-  .then(num => {
-    return getById(id)
-  })
-  .then(deleted => {
-    return deleted;
-  })
+  const result = await db('accounts').where('id', id).delete()
+    return result;
 }
 
 module.exports = {

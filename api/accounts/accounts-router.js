@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const Accounts = require('./accounts-model');
-const { checkAccountId } = require('./accounts-middleware')
+const { checkAccountId, checkAccountPayload, checkAccountNameUnique } = require('./accounts-middleware')
 
 router.get('/', (req, res, next) => {
   // DO YOUR MAGIC
@@ -16,16 +16,31 @@ router.get('/:id',  checkAccountId, (req, res, next) => {
   res.status(200).json(req.account);
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAccountPayload, (req, res, next) => {
   // DO YOUR MAGIC
+  Accounts.create(req.body)
+  .then(newAcct => {
+    res.status(201).json(newAcct)
+  })
+  .catch(next)
 })
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', checkAccountId, checkAccountPayload, (req, res, next) => {
   // DO YOUR MAGIC
+  Accounts.updateById(req.params.id, req.body)
+  .then(updated => {
+    res.status(200).json(updated)
+  })
+  .catch(next)
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', checkAccountId, (req, res, next) => {
   // DO YOUR MAGIC
+  Accounts.deleteById(req.params.id)
+  .then(deleted => {
+    res.status(200).json(req.account)
+  })
+  .catch(next)
 })
 
 router.use((err, req, res, next) => { // eslint-disable-line
