@@ -1,20 +1,16 @@
-const getAll = () => {
-  // DO YOUR MAGIC
-  db('accounts')
-  .then(accounts => {
-    return accounts;
-  })
-  .catch(err => {
+const db = require('../../data/db-config')
 
-  })
+const getAll = async () => {
+  // DO YOUR MAGIC
+  const result = await db('accounts')
+    return result;
 }
 
-const getById = id => {
+const getById = async id => {
   // DO YOUR MAGIC
-  db('accounts').where('id', id).first()
-  .then(account => {
-    return account;
-  })
+  const result = await db('accounts').where('id', id).first()
+    return result;
+ 
 }
 
 const create = account => {
