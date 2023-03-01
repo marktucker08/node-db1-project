@@ -1,4 +1,5 @@
 const Accounts = require('./accounts-model')
+const db = require('../../data/db-config');
 
 exports.checkAccountPayload = (req, res, next) => {
   // DO YOUR MAGIC
@@ -8,7 +9,7 @@ exports.checkAccountPayload = (req, res, next) => {
   if (name === undefined || budget === undefined) {
     res.status(400).json({ message: "name and budget are required" })
   }
-  if (name.trim() < 3 || name.trim() > 100 ) {
+  if (name.trim().length < 3 || name.trim().length > 100 ) {
     res.status(400).json({ message: "name of account must be between 3 and 100" })
   } 
   if (!Number(budget)) {
@@ -17,17 +18,23 @@ exports.checkAccountPayload = (req, res, next) => {
   if (budget < 0 || budget > 1000000) {
     res.status(400).json({ message: "budget of account is too large or too small"})
   }
+  // req.trimmed = { name: name.trim(), budget: budget.trim() }
   next()
 }
 
 exports.checkAccountNameUnique = async (req, res, next) => {
   // DO YOUR MAGIC
-  const unique = await db('accounts').where('name', req.body.name)
+  try { 
+    const unique = await db('accounts').where('name', req.body.name.trim()).first()
     if (unique) {
-      next()
-    } else {
       res.status(400).json({ message: "that name is taken" })
+    } else {
+      next()
     }
+  }
+  catch(err) {
+    next(err)
+  }
 }
 
 exports.checkAccountId = async (req, res, next) => {
